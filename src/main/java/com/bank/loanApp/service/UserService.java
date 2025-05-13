@@ -8,4 +8,6 @@ public interface UserService {
 	public User saveUser(User user);
 	
 	public User updateUser(Long userId, UpdateUserRequest dto);
+
+	public User getUser(Long id);
 }

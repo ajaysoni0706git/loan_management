@@ -4,6 +4,8 @@ import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
+import com.bank.loanApp.model.User;
+
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 
@@ -21,9 +23,12 @@ public class JwtUtil {
     /**
      * Generate a JWT token for the given email.
      */
-    public String generateToken(String email) {
+    public String generateToken(User user) {
         return Jwts.builder()
-                .setSubject(email)
+//                .setSubject(email)
+        		.setSubject(user.getEmail())
+                .claim("userId", user.getId())
+                .claim("role", user.getRole())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -40,6 +45,18 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+    
+	/**
+	 * Extract the user claims from the JWT token.
+	 */
+    public String extractClaim(String token, String claimKey) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key) // key should be of type java.security.Key
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get(claimKey, String.class);
     }
 
     /**
