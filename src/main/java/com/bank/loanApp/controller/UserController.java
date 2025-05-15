@@ -58,7 +58,7 @@ public class UserController {
 	@Autowired
 	private RepaymentService repaymentService;
 
-	@PostMapping("/addCustomer")
+	@PostMapping("/register")
 	public ResponseEntity<User> saveUser(@Valid @RequestBody User user) {
 		User result = userService.saveUser(user);
 		return ResponseEntity.ok(result);
@@ -67,9 +67,9 @@ public class UserController {
 
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody AuthRequest request) {  	
-		authManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+		authManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
-		Optional<User> userOpt = repo.findByEmail(request.getUsername());
+		Optional<User> userOpt = repo.findByEmail(request.getEmail());
 		User user = userOpt.get();
 		String token = jwtUtil.generateToken(user);
 		//     return ResponseEntity.ok(new AuthResponse(token));
@@ -104,7 +104,7 @@ public class UserController {
 		return ResponseEntity.ok(updated);
 	}
 
-	/*
+	
 	@GetMapping("/getUser")
 	public ResponseEntity<?> getUser(@RequestHeader("Authorization") String authHeader) {
 		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -125,7 +125,7 @@ public class UserController {
 
 		return ResponseEntity.ok(userOpt.get());
 	}
-	 */
+	 
 
 	@GetMapping("/getUser/{id}")
 	public ResponseEntity<User> getUser(@PathVariable Long id, Authentication authentication){
